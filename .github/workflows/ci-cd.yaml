@@ -31,35 +31,13 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.2.8
+        uses: hashicorp/setup-terraform@v1
 
-      - name: Trigger Terraform Run
-        run: |
-          WORKSPACE_ID=$(curl -s \
-            -H "Authorization: Bearer $TF_API_TOKEN" \
-            -H "Content-Type: application/vnd.api+json" \
-            https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORGANIZATION/workspaces/$TF_WORKSPACE | jq -r '.data.id')
+      - name: Terraform Init
+        run: terraform init
 
-          curl -X POST \
-          -H "Authorization: Bearer $TF_API_TOKEN" \
-          -H "Content-Type: application/vnd.api+json" \
-          -d '{
-            "data": {
-              "attributes": {
-                "message": "triggered by github actions",
-                "auto-apply": true
-              },
-              "type": "runs",
-              "relationships": {
-                "workspace": {
-                  "data": {
-                    "type": "workspaces",
-                    "id": "'"$WORKSPACE_ID"'"
-                  }
-                }
-              }
-            }
-          }' \
-          https://app.terraform.io/api/v2/runs
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
