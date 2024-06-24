@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - "feature/*"
   workflow_dispatch:
 
 permissions:
@@ -24,8 +23,28 @@ jobs:
 
       - name: Trigger Terraform Run
         run: |
+          WORKSPACE_ID=$(curl -s \
+            -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" \
+            -H "Content-Type: application/vnd.api+json" \
+            https://app.terraform.io/api/v2/organizations/chrisnieves60/workspaces/aws-terraform-ci-cd-2 | jq -r '.data.id')
+
           curl -X POST \
           -H "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" \
           -H "Content-Type: application/vnd.api+json" \
-          -d '{"data": {"attributes": {"message": "Triggered by GitHub Actions"}, "type": "runs", "relationships": {"workspace": {"data": {"type": "workspaces", "id": "'"$TF_WORKSPACE"'"}}}}}' \
+          -d '{
+            "data": {
+              "attributes": {
+                "message": "Triggered by GitHub Actions"
+              },
+              "type": "runs",
+              "relationships": {
+                "workspace": {
+                  "data": {
+                    "type": "workspaces",
+                    "id": "'"$WORKSPACE_ID"'"
+                  }
+                }
+              }
+            }
+          }' \
           https://app.terraform.io/api/v2/runs
