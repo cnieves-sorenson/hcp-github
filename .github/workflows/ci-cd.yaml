@@ -48,7 +48,7 @@ jobs:
           -d '{
             "data": {
               "attributes": {
-                "message": "Triggered by GitHub Actions",
+                "message": "triggered by github actions",
                 "auto-apply": true
               },
               "type": "runs",
