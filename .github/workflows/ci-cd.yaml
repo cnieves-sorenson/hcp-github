@@ -50,6 +50,7 @@ jobs:
               "attributes": {
                 "message": "Triggered by GitHub Actions",
                 "auto-apply": true
+                "refresh": true
               },
               "type": "runs",
               "relationships": {
