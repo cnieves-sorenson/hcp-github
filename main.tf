@@ -22,7 +22,7 @@ terraform {
   }
   required_version = ">= 1.1.0"
 }
-
+//
 variable "region" {
   description = "AWS region to deploy resources to"
   type        = string
