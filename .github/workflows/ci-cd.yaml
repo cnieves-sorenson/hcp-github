@@ -13,7 +13,6 @@ permissions:
 env:
   TF_CLOUD_ORGANIZATION: "chrisnieves60"
   TF_WORKSPACE: "aws-terraform-ci-cd-2"
-  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
 
 jobs:
   deploy:
@@ -33,11 +32,17 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
 
-      - name: Terraform Init
+      - name: Initialize Terraform
+        env:
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
         run: terraform init
 
-      - name: Terraform Plan
+      - name: Plan Terraform
+        env:
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
         run: terraform plan -out=tfplan
 
-      - name: Terraform Apply
+      - name: Apply Terraform
+        env:
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
         run: terraform apply -auto-approve tfplan
